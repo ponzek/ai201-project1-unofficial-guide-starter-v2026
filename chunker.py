@@ -23,6 +23,7 @@ your pipeline, not giving up.
 """
 
 from dataclasses import dataclass
+import re
 
 import config
 from ingest import Document
@@ -82,22 +83,84 @@ def fallback_split(
 
 def split_documents(documents: list[Document]) -> list[Chunk]:
     """
-    Split documents into chunks. ⚠️ REPLACE THE BODY OF THIS IN MILESTONE 3.
+    Split documents into chunks tailored for the campus_life corpus.
 
-    Right now it just calls the fallback. That is the plain, generic behaviour
-    the brief is talking about.
-
-    When you write your own strategy, set `produced_by` to
-    "chunker.py::split_documents" so your README's Sample Chunks section names
-    the right function. `app.py chunks` prints that string for you.
-
-    Things worth thinking about before you write any code:
-      - Are your documents short posts or long guides?
-      - Is the useful information in one sentence, or spread over a paragraph?
-      - Would splitting on paragraph breaks keep more thoughts intact than
-        splitting on a character count?
+    Strategy:
+    - In campus_life, documents are short student posts (averaging ~317 chars).
+      The first line provides the title/subject (e.g. 'Laundry in Aldridge Hall'),
+      which provides necessary context for subsequent sentences using relative
+      pronouns ('here', 'the machines').
+    - Documents within CHUNK_SIZE remain intact to preserve complete thoughts
+      and subject context.
+    - Longer documents or sections are split along sentence boundaries (.!?),
+      respecting CHUNK_SIZE and CHUNK_OVERLAP, guaranteeing no sentence is
+      ever truncated mid-thought.
     """
-    return fallback_split(documents)
+    chunk_size = config.CHUNK_SIZE
+    overlap = config.CHUNK_OVERLAP
+    chunks: list[Chunk] = []
+
+    for doc in documents:
+        text = doc.text.strip()
+        if not text:
+            continue
+
+        if len(text) <= chunk_size:
+            chunks.append(
+                Chunk(
+                    text=text,
+                    source=doc.source,
+                    index=0,
+                    produced_by="chunker.py::split_documents",
+                )
+            )
+            continue
+
+        # Split along sentence boundaries for longer documents
+        sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
+        current_sentences: list[str] = []
+        current_len = 0
+        chunk_idx = 0
+
+        for sentence in sentences:
+            if current_sentences and (current_len + len(sentence) + 1 > chunk_size):
+                chunk_text = " ".join(current_sentences)
+                chunks.append(
+                    Chunk(
+                        text=chunk_text,
+                        source=doc.source,
+                        index=chunk_idx,
+                        produced_by="chunker.py::split_documents",
+                    )
+                )
+                chunk_idx += 1
+
+                overlap_sentences: list[str] = []
+                overlap_len = 0
+                for prev in reversed(current_sentences):
+                    if overlap_len + len(prev) + 1 <= overlap:
+                        overlap_sentences.insert(0, prev)
+                        overlap_len += len(prev) + 1
+                    else:
+                        break
+                current_sentences = overlap_sentences
+                current_len = sum(len(s) + 1 for s in current_sentences)
+
+            current_sentences.append(sentence)
+            current_len += len(sentence) + 1
+
+        if current_sentences:
+            chunk_text = " ".join(current_sentences)
+            chunks.append(
+                Chunk(
+                    text=chunk_text,
+                    source=doc.source,
+                    index=chunk_idx,
+                    produced_by="chunker.py::split_documents",
+                )
+            )
+
+    return chunks
 
 
 def describe(chunks: list[Chunk]) -> str:
