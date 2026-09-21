@@ -98,30 +98,32 @@ Laundry costs $1.75 wash, $1.75 dry, app-based. On noise: moderate; the building
 
 ## Sample Answer
 
-<!-- One complete question and answer, pasted as text, with the source line
-     visible. Milestone 4. -->
-
-**Question:**
+**Question:** What are the lunch wait times at Kestrel Commons between 12:15 and 1:00?
 
 **Answer:**
 
 ```
+The wait times at Kestrel Commons between 12:15 and 1:00 are 20 to 25 minutes. 
+
+Source: `dining_kestrel_commons.txt` (also mentioned in `dining_kestrel_commons_followup.txt`).
 ```
 
-**My relevance cutoff:**
+**My relevance cutoff:** `0.60`
 
-<!-- The number you set in config.py, and how you got there.
-
-     You ran five questions your corpus covers and the five in OUT_OF_SCOPE
-     that it clearly doesn't, and wrote down the best distance for each. What
-     did those two groups look like? Where was the gap? Put the actual numbers
-     here — the table below wants all ten rows.
-
-     Milestone 4. -->
+My in-corpus questions had distances between 0.205 and 0.412. My out-of-scope questions had distances between 0.825 and 0.934. There is a wide gap between 0.412 and 0.825. I picked 0.60 because it sits right in the middle: it accepts all valid campus questions and blocks off-topic ones.
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+| What are the lunch wait times at Kestrel Commons between 12:15 and 1:00? | yes | 0.205 |
+| How much printing money do students receive each semester, and does it roll over? | yes | 0.316 |
+| What notation appears on your transcript if you drop a course after week two? | yes | 0.310 |
+| What time does the library close during reading week? | yes | 0.412 |
+| What payment method is required for the laundry machines in Aldridge Hall? | yes | 0.337 |
+| What is the capital of Mongolia? | no | 0.825 |
+| How do I change the oil in a diesel engine? | no | 0.934 |
+| Who won the 1994 World Cup? | no | 0.886 |
+| What is the recommended dosage of ibuprofen for a headache? | no | 0.844 |
+| How do I write a for loop in Rust? | no | 0.896 |
 
 ## How I Used AI
 
