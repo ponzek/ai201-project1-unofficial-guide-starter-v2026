@@ -15,13 +15,13 @@ This system is a question-answering guide for campus life at university. It answ
 **Chunk size:** 550 characters
 **Overlap:** 100 characters
 
-When inspecting the documents in `campus_life`, we observed that documents are short student posts averaging 317 characters (ranging from 178 to 549 characters). Each document opens with a title line (e.g. `Laundry in Aldridge Hall` or `On the add/drop deadline`) that names the exact subject, while the subsequent 1–2 paragraphs use relative pronouns ("here", "the building", "the window") to deliver concise advice.
+When I read through `campus_life`, I saw that most posts are short (around 317 characters on average). The first line is usually the title, and the rest of the post talks about it using words like "here" or "the building".
 
-The starter's 800-character fixed character window was arbitrarily large and blind to structure. If we split naively on paragraphs or arbitrary character cutoffs, paragraphs 2 and 3 would become disconnected from the title, losing the critical entity name during embedding and retrieval. Furthermore, fixed character slicing cuts sentences in half.
+The starter's 800-character window didn't split anything and didn't care about sentences. If I chopped posts by paragraph, the lower paragraphs lost their title and didn't make sense on their own.
 
-We implemented a semantic boundary chunker in `chunker.py::split_documents`:
-- For short posts within `CHUNK_SIZE` (550 characters), the post remains intact as one atomic chunk. This ensures the title line stays bound to the advice and keeps the thought complete.
-- For longer content or multi-topic posts exceeding 550 characters, the chunker splits along sentence boundaries (`[.!?]`) with a 100-character overlap window, guaranteeing no sentence is truncated mid-thought.
+So I wrote my chunker to:
+- Keep posts under 550 characters in one piece so the title stays attached to the advice.
+- For anything longer, split along sentence ends (`.`, `!`, `?`) with 100 characters of overlap so no sentence gets cut in half.
 
 ## Sample Chunks
 
@@ -112,7 +112,7 @@ My in-corpus questions had distances between 0.205 and 0.412. My out-of-scope qu
 
 **1.** I used AI to develop a chunking strategy for short posts. The initial suggestion was splitting on every paragraph, which broke up title context. I updated it to keep posts under 550 characters intact and use sentence boundaries for longer text, then used AI to verify and inspect the resulting chunks.
 
-**2.** I used AI to measure the retrieval distance scores across all 10 questions. We used AI to verify each distance calculation, confirmed the clear gap between in-corpus (0.205–0.412) and out-of-scope questions (0.825–0.934), and verified that a 0.60 cutoff properly filters off-topic queries.
+**2.** I used AI to measure the retrieval distance scores across all 10 questions. I used AI to verify each distance calculation, confirmed the clear gap between in-corpus (0.205–0.412) and out-of-scope questions (0.825–0.934), and verified that a 0.60 cutoff properly filters off-topic queries.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never

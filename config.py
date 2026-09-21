@@ -27,8 +27,8 @@ CORPUS = os.getenv("AI201_CORPUS", "campus_life")
 # These are deliberately plain, generic numbers. Milestone 3 is where you
 # replace them with numbers that fit the documents you actually read.
 
-CHUNK_SIZE = 550        # characters per chunk, tailored for campus_life posts
-CHUNK_OVERLAP = 100     # characters shared between neighbouring chunks
+CHUNK_SIZE = 550        # sized to keep campus posts intact
+CHUNK_OVERLAP = 100     # overlap between chunks
 
 
 # ─── Retrieval (Milestone 4) ─────────────────────────────────────────────────

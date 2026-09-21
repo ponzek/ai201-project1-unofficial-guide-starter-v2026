@@ -83,18 +83,11 @@ def fallback_split(
 
 def split_documents(documents: list[Document]) -> list[Chunk]:
     """
-    Split documents into chunks tailored for the campus_life corpus.
+    Split documents into chunks for campus_life.
 
-    Strategy:
-    - In campus_life, documents are short student posts (averaging ~317 chars).
-      The first line provides the title/subject (e.g. 'Laundry in Aldridge Hall'),
-      which provides necessary context for subsequent sentences using relative
-      pronouns ('here', 'the machines').
-    - Documents within CHUNK_SIZE remain intact to preserve complete thoughts
-      and subject context.
-    - Longer documents or sections are split along sentence boundaries (.!?),
-      respecting CHUNK_SIZE and CHUNK_OVERLAP, guaranteeing no sentence is
-      ever truncated mid-thought.
+    Most posts in this corpus are short (~300 characters) with the topic on the
+    first line. If a post fits inside chunk_size, keep it together so it keeps its
+    title context. If a post is longer, split on full sentences so none get cut in half.
     """
     chunk_size = config.CHUNK_SIZE
     overlap = config.CHUNK_OVERLAP
@@ -105,6 +98,7 @@ def split_documents(documents: list[Document]) -> list[Chunk]:
         if not text:
             continue
 
+        # Keep short posts whole so the title stays with the text
         if len(text) <= chunk_size:
             chunks.append(
                 Chunk(
@@ -116,7 +110,7 @@ def split_documents(documents: list[Document]) -> list[Chunk]:
             )
             continue
 
-        # Split along sentence boundaries for longer documents
+        # For longer posts, split on sentences
         sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
         current_sentences: list[str] = []
         current_len = 0

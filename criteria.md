@@ -23,7 +23,7 @@ For at least 4 of my 5 test questions, the retrieved chunks include one that
 contains the answer.
 
 **Why this target:**
-In `campus_life`, each topic (such as laundry policies, library hours, or add/drop rules) is contained within a dedicated short document. Because semantic search with `all-MiniLM-L6-v2` easily identifies the relevant document when the query matches the topic closely, at least 4 should succeed; 4 of 5 accounts for occasional vocabulary disconnect between casual student phrasing and official wording.
+In my corpus, each topic (like laundry, library hours, or add/drop rules) has its own short post. The search usually finds the right post easily, so I expect at least 4 to hit. I gave myself 1 miss in case a student's casual wording doesn't match the post.
 
 ---
 
@@ -32,7 +32,7 @@ In `campus_life`, each topic (such as laundry policies, library hours, or add/dr
 Every answer the system produces names at least one source document.
 
 **Why this target:**
-All five answers should name a source because each retrieved chunk carries the filename in its metadata, and the prompt template in `generate.py` instructs the model to cite its source document. As long as retrieval returns at least one chunk passing the gate, the model always has a concrete filename to cite.
+All five should name a source because each chunk keeps its filename in its metadata and the prompt tells the model to name where it got the answer. If a chunk gets retrieved, the model always has a filename to cite.
 
 ---
 
@@ -43,7 +43,7 @@ stops it and the system returns "I don't have enough information about that" —
 in at least 4 of 5 tries.
 
 **Why this target:**
-Completely unrelated questions (like diesel engines or world geography) have cosine distances typically exceeding 0.70 to 0.85 against university campus documents. With a relevance cutoff around 0.60, the gate cleanly blocks out-of-domain queries, while 4 of 5 leaves margin for anomalous semantic overlap.
+Random questions like diesel engines or world geography have high distance scores (over 0.80) against campus posts. A cutoff at 0.60 should easily block them, but 4 of 5 gives a little room in case a question accidentally shares a word with campus advice.
 
 ---
 
@@ -52,7 +52,7 @@ Completely unrelated questions (like diesel engines or world geography) have cos
 At least 4 of 5 sampled chunks read as a complete thought, with no sentence cut in half at either boundary.
 
 **Why this target:**
-In `campus_life`, essential facts like deadlines, fee amounts, and office hours are often stated within a single sentence. If chunking splits across a sentence boundary, that factual context is fractured and unrecoverable during retrieval. Choosing 4 of 5 ensures our chunking strategy respects sentence or paragraph boundaries while allowing tolerance for rare formatting quirks.
+In campus life, important details like fees or deadlines are usually in a single sentence. If a chunk cuts a sentence in half, that info is lost. 4 of 5 lets me make sure my chunker keeps thoughts together while forgiving any weird punctuation.
 
 ---
 
@@ -61,7 +61,7 @@ In `campus_life`, essential facts like deadlines, fee amounts, and office hours 
 For at least 4 of my 5 test questions, the primary source cited in the generated answer matches the ground-truth source document.
 
 **Why this target:**
-Simply citing *any* document (as in criterion 2) is not enough for an informational guide; the system must attribute the answer to the correct origin document (e.g. citing `dining_kestrel_commons.txt` for dining queries). Setting this to 4 of 5 tests true attribution precision without failing on queries that legitimately touch upon two related documents.
+Just naming any source isn't enough; it has to be the right one (like citing the dining hall file for a food question). I set it to 4 of 5 because sometimes two campus files talk about similar things and might both be retrieved.
 
 
 
