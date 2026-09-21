@@ -1,19 +1,6 @@
 # The Unofficial Guide
 
-<!-- Replace this line with your name and which corpus you picked. -->
-
-> **This file is your submission.** Fill it in as you go — most sections get
-> written during the milestone that produces them, not at the end.
->
-> How the starter works, and every command you'll need, is in `RUNNING.md`.
-> Leave that file alone.
->
-> **Paste everything as text.** No screenshots, no video. A typed table gets
-> full credit; a picture of the same table gets none.
->
-> Delete these instruction blocks as you replace them. The `<!-- -->` comments
-> are notes to you and don't show up when the page renders — you can leave them
-> or remove them.
+**Student:** Karina Ponze | **Corpus:** campus_life
 
 ---
 
@@ -21,11 +8,7 @@
 
 ## What This Does
 
-<!-- Three or four sentences. Which corpus you picked, and the kinds of
-     questions your system answers. Write it for someone who has never seen
-     this repo.
-
-     Milestone 5. -->
+This system is a question-answering guide for campus life at university. It answers practical student questions about dining halls, dorm laundry, course workloads, and registrar rules. It retrieves relevant advice from the `campus_life` corpus and generates grounded answers citing the exact source documents.
 
 ## Chunking Strategy
 
@@ -127,18 +110,9 @@ My in-corpus questions had distances between 0.205 and 0.412. My out-of-scope qu
 
 ## How I Used AI
 
-<!-- Two specific moments. For each: what you asked for, what came back, and
-     what you changed about it.
+**1.** I used AI to develop a chunking strategy for short posts. The initial suggestion was splitting on every paragraph, which broke up title context. I updated it to keep posts under 550 characters intact and use sentence boundaries for longer text, then used AI to verify and inspect the resulting chunks.
 
-     "I asked Claude to write the chunking function from my notes. It ignored
-     the overlap, so I added that myself" is the level of detail we're after.
-     "I used AI to help me code" is not.
-
-     Milestone 5. -->
-
-**1.**
-
-**2.**
+**2.** I used AI to measure the retrieval distance scores across all 10 questions. We used AI to verify each distance calculation, confirmed the clear gap between in-corpus (0.205–0.412) and out-of-scope questions (0.825–0.934), and verified that a 0.60 cutoff properly filters off-topic queries.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
