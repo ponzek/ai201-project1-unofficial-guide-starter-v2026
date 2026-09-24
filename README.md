@@ -114,6 +114,8 @@ My in-corpus questions had distances between 0.205 and 0.412. My out-of-scope qu
 
 **2.** I used AI to measure the retrieval distance scores across all 10 questions. I used AI to verify each distance calculation, confirmed the clear gap between in-corpus (0.205–0.412) and out-of-scope questions (0.825–0.934), and verified that a 0.60 cutoff properly filters off-topic queries.
 
+**3.** In unit 2, I used AI to run the three evaluation passes and read the run logs. The verdicts, diagnoses, and "what I'd do differently" sections are my own judgments based on the actual output.
+
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
      claims earns nothing.
